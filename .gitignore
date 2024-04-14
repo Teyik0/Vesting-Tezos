@@ -1,0 +1,4 @@
+.ligo
+compiled
+deploy/node_modules
+deploy/dist
