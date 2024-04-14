@@ -14,28 +14,20 @@ test = ligo run test $(project_root) ./test/$(1) --no-warn
 .PHONY: test compile
 compile: ## compile contracts to Michelson
 	@mkdir -p compiled
-	@$(call compile,counter.mligo,counter.tz, -m C)
-	@$(call compile,call_counter.mligo,call_counter.tz, -m CALLER)
-	@$(call compile,erc20.mligo,erc20.tz, -m ERC20)
-
+	@$(call compile,fa2_single_asset.mligo,fa2_single_asset.tz, -m TOKEN)
+	@$(call compile,fa2_single_asset.mligo,fa2_single_asset.mligo.json, --michelson-format json)
+	@$(call compile,vesting.mligo,vesting.tz, -m VESTING)
+	@$(call compile,vesting.mligo,vesting.mligo.json, --michelson-format json)
 
 test: ## run tests (SUITE=asset_approve make test)
 ifndef SUITE
-	@$(call test,test_fact.mligo)
-	@$(call test,callerFA2_test.mligo)
+	@$(call test,fa2_single_asset.test.mligo)
 
 else
 	@$(call test,$(SUITE).test.mligo)
 endif
 
 
-deploy: deploy_deps deploy.js ## deploy exo_2
-
-deploy.js:
+deploy.ts:
 	@echo "Running deploy script\n"
-	@cd deploy && npm i && npm run deploy_exo2
-
-deploy_deps:
-	@echo "Installing deploy script dependencies"
-	@cd deploy && npm install
-	@echo ""
+	@cd deploy && yarn install && yarn deploy
